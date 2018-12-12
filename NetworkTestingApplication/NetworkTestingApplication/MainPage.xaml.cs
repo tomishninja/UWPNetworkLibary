@@ -34,9 +34,10 @@ namespace NetworkTestingApplication
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
 
-        }// Every protocol typically has a standard port number. For example, HTTP is typically 80, FTP is 20 and 21, etc.
-         // For this example, we'll choose an arbitrary port number.
-        static string PortNumber = "1337";
+        }
+        // Every protocol typically has a standard port number. For example, HTTP is typically 80, FTP is 20 and 21, etc.
+        // For this example, we'll choose an arbitrary port number.
+        static string TCPPortNumber = "1337";
 
 
 
@@ -49,8 +50,29 @@ namespace NetworkTestingApplication
         {
             //this.StartServerTCP();
             //this.StartClientTCP();
-            this.StartServerUDP();
+
+            //this.StartServerUDP();
             //this.StartClientUDP();
+            NetworkTestingAlgorithms networkTesting = NetworkTestingAlgorithms.GetInstance();
+
+            //networkTesting.StartServerTCP(TCPPortNumber);
+            //networkTesting.StartClientTCP("localhost", TCPPortNumber);
+
+            networkTesting.StartServerUDP(ServerPortNumber);
+            networkTesting.StartClientUDP("localhost", ServerPortNumber, ClientPortNumber);
+
+            System.Threading.Tasks.Task.Delay(1000);
+            outputToUI(networkTesting.RetreveLog());
+        }
+
+        private void outputToUI(string[] logStrings)
+        {
+            if (logStrings == null) return;
+
+            foreach(string logString in logStrings)
+            {
+                this.serverListBox.Items.Add(logString);
+            }
         }
 
         private async void StartServerUDP()
@@ -113,7 +135,7 @@ namespace NetworkTestingApplication
                 clientDatagramSocket.MessageReceived += ClientDatagramSocket_MessageReceived;
 
                 // The server hostname that we will be establishing a connection to. In this example, the server and client are in the same process.
-                var hostName = new Windows.Networking.HostName("localhost");
+                var hostName = new Windows.Networking.HostName("10.160.99.69");
 
                 this.clientListBox.Items.Add("client is about to bind...");
 
@@ -169,7 +191,7 @@ namespace NetworkTestingApplication
                 streamSocketListener.ConnectionReceived += this.StreamSocketListener_ConnectionReceived;
 
                 // Start listening for incoming TCP connections on the specified port. You can specify any port that's not currently in use.
-                await streamSocketListener.BindServiceNameAsync(MainPage.PortNumber);
+                await streamSocketListener.BindServiceNameAsync(MainPage.TCPPortNumber);
 
                 this.serverListBox.Items.Add("server is listening...");
             }
@@ -219,7 +241,7 @@ namespace NetworkTestingApplication
 
                     this.clientListBox.Items.Add("client is trying to connect...");
 
-                    await streamSocket.ConnectAsync(hostName, MainPage.PortNumber);
+                    await streamSocket.ConnectAsync(hostName, MainPage.TCPPortNumber);
 
                     this.clientListBox.Items.Add("client connected");
 
@@ -256,6 +278,11 @@ namespace NetworkTestingApplication
                 Windows.Networking.Sockets.SocketErrorStatus webErrorStatus = Windows.Networking.Sockets.SocketError.GetStatus(ex.GetBaseException().HResult);
                 this.clientListBox.Items.Add(webErrorStatus.ToString() != "Unknown" ? webErrorStatus.ToString() : ex.Message);
             }
+        }
+
+        private void RefreashButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.outputToUI(NetworkTestingAlgorithms.GetInstance().RetreveLog());
         }
     }
 }
