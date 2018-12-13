@@ -1,12 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.Networking.Sockets;
-using Windows.Storage.Streams;
-using Windows.UI.Core;
 
 namespace NetworkTestingApplication
 {
@@ -118,7 +112,7 @@ namespace NetworkTestingApplication
             this.ConsoleLogList.Add("server closed its socket");
         }
 
-        public async void StartClientUDP(string hostName, string serverPortNumber, string clientPortNumber)
+        public async void StartClientUDP(string hostName, string serverPortNumber, string clientPortNumber, string request)
         {
             try
             {
@@ -137,7 +131,6 @@ namespace NetworkTestingApplication
                 this.ConsoleLogList.Add(string.Format("client is bound to port number {0}", clientPortNumber));
 
                 // Send a request to the echo server.
-                string request = "Hello, World!";
                 using (var serverDatagramSocket = new Windows.Networking.Sockets.DatagramSocket())
                 {
                     using (Stream outputStream = (await serverDatagramSocket.GetOutputStreamAsync(_hostName, serverPortNumber)).AsStreamForWrite())
@@ -222,7 +215,7 @@ namespace NetworkTestingApplication
             this.ConsoleLogList.Add("server closed its socket");
         }
 
-        public async void StartClientTCP(string hostName, string portNumber)
+        public async void StartClientTCP(string hostName, string portNumber, string request)
         {
             try
             {
@@ -239,13 +232,15 @@ namespace NetworkTestingApplication
                     this.ConsoleLogList.Add("client connected");
 
                     // Send a request to the echo server.
-                    string request = "Hello, World!";
-                    using (Stream outputStream = streamSocket.OutputStream.AsStreamForWrite())
+                    for(int i = 0; i < 3; i++)
                     {
-                        using (var streamWriter = new StreamWriter(outputStream))
+                        using (Stream outputStream = streamSocket.OutputStream.AsStreamForWrite())
                         {
-                            await streamWriter.WriteLineAsync(request);
-                            await streamWriter.FlushAsync();
+                            using (var streamWriter = new StreamWriter(outputStream))
+                            {
+                                await streamWriter.WriteLineAsync(request);
+                                await streamWriter.FlushAsync();
+                            }
                         }
                     }
 
@@ -262,9 +257,9 @@ namespace NetworkTestingApplication
                     }
 
                     this.ConsoleLogList.Add(string.Format("client received the response: \"{0}\" ", response));
+                    this.ConsoleLogList.Add("client closed its socket");
                 }
-
-                this.ConsoleLogList.Add("client closed its socket");
+                
             }
             catch (Exception ex)
             {

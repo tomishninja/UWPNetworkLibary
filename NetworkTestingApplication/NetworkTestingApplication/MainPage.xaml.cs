@@ -16,6 +16,8 @@ using MyUniversalApp.Helpers;
 using Windows.Networking;
 using System.Diagnostics;
 using Windows.UI.Core;
+using System.Threading.Tasks;
+using TomsUWPNetworkingLibrary;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -46,23 +48,13 @@ namespace NetworkTestingApplication
         static string ClientPortNumber = "1336";
         static string ServerPortNumber = "1337";
 
+        public NetworkClient networkingClient = null;
+
+        public NetworkServer networkingServer = null;
+
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            //this.StartServerTCP();
-            //this.StartClientTCP();
 
-            //this.StartServerUDP();
-            //this.StartClientUDP();
-            NetworkTestingAlgorithms networkTesting = NetworkTestingAlgorithms.GetInstance();
-
-            //networkTesting.StartServerTCP(TCPPortNumber);
-            //networkTesting.StartClientTCP("localhost", TCPPortNumber);
-
-            networkTesting.StartServerUDP(ServerPortNumber);
-            networkTesting.StartClientUDP("localhost", ServerPortNumber, ClientPortNumber);
-
-            System.Threading.Tasks.Task.Delay(1000);
-            outputToUI(networkTesting.RetreveLog());
         }
 
         private void outputToUI(string[] logStrings)
@@ -71,7 +63,7 @@ namespace NetworkTestingApplication
 
             foreach(string logString in logStrings)
             {
-                this.serverListBox.Items.Add(logString);
+                this.DebugListBox.Items.Add(logString);
             }
         }
 
@@ -135,7 +127,7 @@ namespace NetworkTestingApplication
                 clientDatagramSocket.MessageReceived += ClientDatagramSocket_MessageReceived;
 
                 // The server hostname that we will be establishing a connection to. In this example, the server and client are in the same process.
-                var hostName = new Windows.Networking.HostName("10.160.99.69");
+                var hostName = new Windows.Networking.HostName("localhost");
 
                 this.clientListBox.Items.Add("client is about to bind...");
 
@@ -237,7 +229,7 @@ namespace NetworkTestingApplication
                 using (var streamSocket = new Windows.Networking.Sockets.StreamSocket())
                 {
                     // The server hostname that we will be establishing a connection to. In this example, the server and client are in the same process.
-                    var hostName = new Windows.Networking.HostName("10.160.98.35");
+                    var hostName = new Windows.Networking.HostName("localhost");
 
                     this.clientListBox.Items.Add("client is trying to connect...");
 
@@ -280,9 +272,152 @@ namespace NetworkTestingApplication
             }
         }
 
+        private async Task<string> InputTextDialogAsync(string title)
+        {
+            TextBox inputTextBox = new TextBox();
+            inputTextBox.AcceptsReturn = false;
+            inputTextBox.Height = 32;
+            ContentDialog dialog = new ContentDialog();
+            dialog.Content = inputTextBox;
+            dialog.Title = title;
+            dialog.IsSecondaryButtonEnabled = true;
+            dialog.PrimaryButtonText = "Ok";
+            dialog.SecondaryButtonText = "Cancel";
+            if (await dialog.ShowAsync() == ContentDialogResult.Primary)
+                return inputTextBox.Text;
+            else
+                return "";
+        }
+
         private void RefreashButton_Click(object sender, RoutedEventArgs e)
         {
             this.outputToUI(NetworkTestingAlgorithms.GetInstance().RetreveLog());
+        }
+
+        private void Button_BasicDemoUDP_Click(object sender, RoutedEventArgs e)
+        {
+            this.StartServerUDP();
+            this.StartClientUDP();
+        }
+
+        private void Button_BasicDemoTCP_Click(object sender, RoutedEventArgs e)
+        {
+            this.StartServerTCP();
+            this.StartClientTCP();
+        }
+
+        private async void Button_BasicDemoUDP2_Click(object sender, RoutedEventArgs e)
+        {
+            // show populated dialog
+            ContentDialog1 dialog = new ContentDialog1();
+            dialog.SetTextboxes(
+                "localhost", ClientPortNumber,
+                ServerPortNumber, "HelloWorld");
+
+            var result = await dialog.ShowAsync();
+            if (result == ContentDialogResult.Secondary)
+            {
+                string[] parameters = dialog.GetTextBoxContent();
+                // user didn't cancel
+                NetworkTestingAlgorithms networkTesting = NetworkTestingAlgorithms.GetInstance();
+
+                // start the networks
+                networkTesting.StartServerUDP(parameters[2]);
+                networkTesting.StartClientUDP(parameters[0], parameters[2], parameters[3], parameters[1]);
+            }
+        }
+
+        private async void Button_BasicDemoTCP2_Click(object sender, RoutedEventArgs e)
+        {
+            // show populated dialog
+            ContentDialog1 dialog = new ContentDialog1();
+            dialog.SetTextboxes(
+                "localhost", TCPPortNumber,
+                TCPPortNumber, "HelloWorld");
+
+            var result = await dialog.ShowAsync();
+            if (result == ContentDialogResult.Secondary)
+            {
+                string[] parameters = dialog.GetTextBoxContent();
+                // user didn't cancel
+                NetworkTestingAlgorithms networkTesting = NetworkTestingAlgorithms.GetInstance();
+
+                // start the networks
+                networkTesting.StartServerTCP(parameters[2]);
+                networkTesting.StartClientTCP(parameters[0], parameters[2], parameters[1]);
+            }
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            this.outputToUI(NetworkTestingAlgorithms.GetInstance().RetreveLog());
+        }
+
+        private async void Button_StartUDPClient_Click(object sender, RoutedEventArgs e)
+        {
+            // show populated dialog
+            ContentDialog1 dialog = new ContentDialog1();
+            dialog.SetTextboxes(
+                "localhost", ClientPortNumber,
+                ServerPortNumber, "HelloWorld");
+
+            var result = await dialog.ShowAsync();
+            if (result == ContentDialogResult.Secondary)
+            {
+                string[] parameters = dialog.GetTextBoxContent();
+
+                UDPClient client = new UDPClient(parameters[0], parameters[2]);
+                this.networkingClient = client;
+                await client.Connect();
+                await client.SendAsync(parameters[1]);
+            }
+        }
+
+        private async void Button_StartUDPServer_Click(object sender, RoutedEventArgs e)
+        {
+            // show populated dialog
+            ContentDialog1 dialog = new ContentDialog1();
+            dialog.SetTextboxes(
+                "localhost", ClientPortNumber,
+                ServerPortNumber, "HelloWorld");
+
+            var result = await dialog.ShowAsync();
+            if (result == ContentDialogResult.Secondary)
+            {
+                string[] parameters = dialog.GetTextBoxContent();
+
+                UDPServer server = new UDPServer(parameters[2]);
+                this.networkingServer = server;
+                server.StartAsync();
+            }
+        }
+
+        private void Button_Libary_Refresh_Click(object sender, RoutedEventArgs e)
+        {
+            // remove all of the current items so things don't double up
+            for (int index = 0; index < serverListBoxLibaryTesting.Items.Count; index++)
+            {
+                serverListBoxLibaryTesting.Items.RemoveAt(index);
+            }
+
+            for (int index = 0; index < clientListBoxLibaryTesting.Items.Count; index++)
+            {
+                clientListBoxLibaryTesting.Items.RemoveAt(index);
+            }
+
+            // populate each list with the new feilds
+            KeyValuePair<DateTime, string>[] serverLog = networkingServer.DegbugLogMessages;
+            KeyValuePair<DateTime, string>[] clientLog = networkingClient.DegbugLogMessages;
+
+            for (int index = 0; index < serverLog.Length; index++)
+            {
+                serverListBoxLibaryTesting.Items.Add(serverLog[index].Key.ToString() + " : " + serverLog[index].Value);
+            }
+
+            for (int index = 0; index < serverLog.Length; index++)
+            {
+                clientListBoxLibaryTesting.Items.Add(serverLog[index].Key.ToString() + " : " + serverLog[index].Value);
+            }
         }
     }
 }

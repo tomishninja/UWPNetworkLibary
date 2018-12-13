@@ -14,24 +14,61 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <StackPanel>
-            <TextBlock Margin="9.6,0" Style="{StaticResource TitleTextBlockStyle}" Text="TCP socket example"/>
-            <TextBlock Margin="7.2,0,0,0" Style="{StaticResource HeaderTextBlockStyle}" Text="StreamSocket &amp; StreamSocketListener"/>
-        </StackPanel>
+        <CommandBar x:Name="MainCommandBar" Grid.Row="0">
+            <AppBarButton x:Name="Button_StartUDPClient" Content="Start UDP Client" Click="Button_StartUDPClient_Click"></AppBarButton>
+            <AppBarButton x:Name="Button_StartUDPServer" Content="Start UDP Server" Click="Button_StartUDPServer_Click"></AppBarButton>
+            <AppBarButton x:Name="Button_BasicDemoUDP" Content="UDP Windows Demo" Click="Button_BasicDemoUDP_Click"></AppBarButton>
+            <AppBarButton x:Name="Button_BasicDemoUDP2" Content="UDP Modified Demo" Click="Button_BasicDemoUDP2_Click"></AppBarButton>
+            <AppBarButton x:Name="Button_BasicDemoTCP" Content="TCP Windows Demo" Click="Button_BasicDemoTCP_Click"></AppBarButton>
+            <AppBarButton x:Name="Button_BasicDemoTCP2" Content="TCP Modifided Demo" Click="Button_BasicDemoTCP2_Click"></AppBarButton>
+        </CommandBar>
 
-        <Grid Grid.Row="1">
-            <Grid.RowDefinitions>
-                <RowDefinition/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <Button x:Name="refreashButton" Click="RefreashButton_Click">Refreash Console</Button>
-            <ListBox x:Name="clientListBox" Grid.Row="1" Margin="9.6"/>
-            <TextBlock Grid.Column="1" Margin="9.6" Style="{StaticResource SubtitleTextBlockStyle}" Text="server"/>
-            <ListBox x:Name="serverListBox" Grid.Column="1" Grid.Row="1" Margin="9.6"/>
-        </Grid>
+        <Pivot Grid.Row="1">
+            <PivotItem Header="BasicDemo">
+                <Grid HorizontalAlignment="Stretch">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="Server"/>
+                        <ListBox x:Name="serverListBox" Grid.Column="1" Grid.Row="1" Margin="9.6"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Text="Client"/>
+                        <ListBox x:Name="clientListBox" Grid.Row="1" Margin="9.6"/>
+                    </StackPanel>
+                </Grid>
+            </PivotItem>
+            <PivotItem Header="AdjustedDemo">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Debug Log"/>
+                        <Button Click="Button_Click">Refreash</Button>
+                    </StackPanel>
+                    <ListBox x:Name="DebugListBox" Grid.Row="1" Margin="9.6"/>
+                </StackPanel>
+            </PivotItem>
+            <PivotItem Header="UDPLibaryDemo">
+                <StackPanel>
+                    <Button x:Name="Button_Libary_Refresh" Click="Button_Libary_Refresh_Click">Refresh</Button>
+                    <Grid HorizontalAlignment="Stretch">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="Server"/>
+                            <ListBox x:Name="serverListBoxLibaryTesting" Grid.Column="1" Grid.Row="1" Margin="9.6"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Text="Client"/>
+                            <ListBox x:Name="clientListBoxLibaryTesting" Grid.Row="1" Margin="9.6"/>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+                
+            </PivotItem>
+        </Pivot>
     </Grid>
 </Page>
