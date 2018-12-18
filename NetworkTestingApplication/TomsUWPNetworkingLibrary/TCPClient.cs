@@ -10,7 +10,7 @@ namespace TomsUWPNetworkingLibrary
     public class TCPClient : NetworkClient
     {
         private Windows.Networking.HostName _hostName;
-        Windows.Networking.Sockets.StreamSocket socket;
+        private Windows.Networking.Sockets.StreamSocket socket;
 
         public TCPClient(string ipaddress, string portNumber) : base(ipaddress, portNumber)
         {
@@ -67,6 +67,11 @@ namespace TomsUWPNetworkingLibrary
 
             this.AddEntryToDebugLog("client sent the request");
 
+            await this.Read();
+        }
+
+        internal async virtual Task Read()
+        {
             // Read data from the echo server.
             string response;
             using (Stream inputStream = socket.InputStream.AsStreamForRead())
@@ -76,7 +81,6 @@ namespace TomsUWPNetworkingLibrary
                     response = await streamReader.ReadLineAsync();
                 }
             }
-
             this.AddEntryToDebugLog("client received the response");
         }
 
