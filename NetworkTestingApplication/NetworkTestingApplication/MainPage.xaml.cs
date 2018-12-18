@@ -433,9 +433,9 @@ namespace NetworkTestingApplication
                 serverListBoxLibaryTesting.Items.Add(serverLog[index].Key.ToString() + " : " + serverLog[index].Value);
             }
 
-            for (int index = 0; index < serverLog.Length; index++)
+            for (int index = 0; index < clientLog.Length; index++)
             {
-                clientListBoxLibaryTesting.Items.Add(serverLog[index].Key.ToString() + " : " + serverLog[index].Value);
+                clientListBoxLibaryTesting.Items.Add(serverLog[index].Key.ToString() + " : " + clientLog[index].Value);
             }
         }
     }
