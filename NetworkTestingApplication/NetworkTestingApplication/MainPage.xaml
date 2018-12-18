@@ -32,11 +32,11 @@
                     </Grid.ColumnDefinitions>
                     <StackPanel Grid.Column="0">
                         <TextBlock Text="Server"/>
-                        <ListBox x:Name="serverListBox" Grid.Column="1" Grid.Row="1" Margin="9.6"/>
+                        <ListBox x:Name="serverListBox" Grid.Column="1" Grid.Row="1" Margin="9.6" ScrollViewer.HorizontalScrollBarVisibility="Auto"/>
                     </StackPanel>
                     <StackPanel Grid.Column="1">
                         <TextBlock Text="Client"/>
-                        <ListBox x:Name="clientListBox" Grid.Row="1" Margin="9.6"/>
+                        <ListBox x:Name="clientListBox" Grid.Row="1" Margin="9.6" ScrollViewer.HorizontalScrollBarVisibility="Auto"/>
                     </StackPanel>
                 </Grid>
             </PivotItem>
@@ -59,15 +59,86 @@
                         </Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0">
                             <TextBlock Text="Server"/>
-                            <ListBox x:Name="serverListBoxLibaryTesting" Grid.Column="1" Grid.Row="1" Margin="9.6"/>
+                            <ListBox x:Name="serverListBoxLibaryTesting" Grid.Column="1" Grid.Row="1" Margin="9.6" ScrollViewer.HorizontalScrollBarVisibility="Auto"/>
                         </StackPanel>
                         <StackPanel Grid.Column="1">
                             <TextBlock Text="Client"/>
-                            <ListBox x:Name="clientListBoxLibaryTesting" Grid.Row="1" Margin="9.6"/>
+                            <ListBox x:Name="clientListBoxLibaryTesting" Grid.Row="1" Margin="9.6" ScrollViewer.HorizontalScrollBarVisibility="Auto"/>
                         </StackPanel>
                     </Grid>
                 </StackPanel>
                 
+            </PivotItem>
+            <PivotItem Header="Server Control">
+                <StackPanel>
+                    <Grid HorizontalAlignment="Stretch">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0">
+                            
+                        </StackPanel>
+                        <StackPanel Grid.Column="1">
+                            <Pivot>
+                                <PivotItem Header="Debug">
+                                    <ListBox x:Name="DebugConsoleServerListBox" Grid.Row="1" Margin="9.6" ScrollViewer.HorizontalScrollBarVisibility="Auto"/>
+                                </PivotItem>
+
+                                <PivotItem Header="Messages">
+                                    <ListBox x:Name="MessageConsoleServerListBox" Grid.Row="1" Margin="9.6" ScrollViewer.HorizontalScrollBarVisibility="Auto"/>
+                                </PivotItem>
+                            </Pivot>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+
+            </PivotItem>
+            <PivotItem Header="Client Control">
+                <StackPanel>
+                    <Grid HorizontalAlignment="Stretch">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0">
+                            <Grid HorizontalAlignment="Stretch">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Column="0" Text="Type : "/>
+                                <ComboBox Grid.Column="1">
+                                    <ComboBoxItem Content="TCP"/>
+                                    <ComboBoxItem Content="UDP"/>
+                                </ComboBox>
+                                <TextBlock Grid.Column="0" Grid.Row="1" Text="Port : "/>
+                                <TextBox x:Name="Client_Port_Ip_Address_Textbox" Grid.Column="1" Grid.Row="1"/>
+                                
+                                <TextBlock Grid.Column="0" Grid.Row="2" Text="IP : "/>
+                                <TextBox x:Name="Client_IP_Textbox" Grid.Column="1" Grid.Row="2" Text="localhost"/>
+                                
+                            </Grid>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1">
+                            <Pivot>
+                                <PivotItem Header="Debug">
+                                    <ListBox x:Name="DebugConsoleClientListBox" Grid.Row="1" Margin="9.6" ScrollViewer.HorizontalScrollBarVisibility="Auto"/>
+                                </PivotItem>
+
+                                <PivotItem Header="Messages">
+                                    <ListBox x:Name="MessageConsoleClientListBox" Grid.Row="1" Margin="9.6" ScrollViewer.HorizontalScrollBarVisibility="Auto"/>
+                                </PivotItem>
+                            </Pivot>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
             </PivotItem>
         </Pivot>
     </Grid>
