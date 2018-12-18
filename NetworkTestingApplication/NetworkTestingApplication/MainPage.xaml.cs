@@ -438,5 +438,106 @@ namespace NetworkTestingApplication
                 clientListBoxLibaryTesting.Items.Add(serverLog[index].Key.ToString() + " : " + clientLog[index].Value);
             }
         }
+
+        private void ButtonStartClientServer_Click(object sender, RoutedEventArgs e)
+        {
+            networkingServer = new UDPServer(this.Server_Port_Address_Textbox.Text);
+            networkingServer.StartAsync();
+        }
+
+        private void ButtonCloseClientServer_Click(object sender, RoutedEventArgs e)
+        {
+            networkingServer.Close();
+        }
+
+        private void ButtonStartClientClient_Click(object sender, RoutedEventArgs e)
+        {
+            networkingClient = new UDPClient(this.Client_IP_Textbox.Text, this.Client_Port_Address_Textbox.Text);
+            networkingClient.Connect();
+        }
+
+        private void ButtonCloseClientClient_Click(object sender, RoutedEventArgs e)
+        {
+            networkingClient.Close();
+        }
+
+        private void ButtonSendMessageClient_Click(object sender, RoutedEventArgs e)
+        {
+            networkingClient.SendAsync(this.Client_Port_Address_Textbox.Text);
+        }
+
+        private void RefreshConsoleMessages()
+        {
+            for (int i = 0; i < MessageConsoleClientListBox.Items.Count(); i++)
+            {
+                this.MessageConsoleClientListBox.Items.RemoveAt(i);
+            }
+
+            for (int i = 0; i < DebugConsoleClientListBox.Items.Count(); i++)
+            {
+                this.DebugConsoleClientListBox.Items.RemoveAt(i);
+            }
+
+            for (int i = 0; i < DebugConsoleServerListBox.Items.Count(); i++)
+            {
+                this.DebugConsoleServerListBox.Items.RemoveAt(i);
+            }
+
+            for (int i = 0; i < MessageConsoleServerListBox.Items.Count(); i++)
+            {
+                this.MessageConsoleServerListBox.Items.RemoveAt(i);
+            }
+
+            KeyValuePair<DateTime, string>[] messagesRecivedFromClient;
+            KeyValuePair<DateTime, string>[] debugLogFromClient;
+            if (networkingClient != null)
+            {
+                messagesRecivedFromClient = networkingClient.MessageRecivedLog;
+                debugLogFromClient = networkingClient.DegbugLogMessages;
+            }
+            else
+            {
+                messagesRecivedFromClient = new KeyValuePair<DateTime, string>[0];
+                debugLogFromClient = new KeyValuePair<DateTime, string>[0];
+            }
+
+            KeyValuePair<DateTime, string>[] debugLogFromServer;
+            KeyValuePair<DateTime, string>[] messagesRecivedFromServer;
+            if (networkingServer != null)
+            {
+                debugLogFromServer = networkingServer.DegbugLogMessages;
+                messagesRecivedFromServer = networkingServer.MessageRecivedLog;
+            }
+            else
+            {
+                debugLogFromServer = networkingServer.DegbugLogMessages;
+                messagesRecivedFromServer = networkingServer.MessageRecivedLog;
+            }
+
+            foreach(KeyValuePair<DateTime, string> valuePair in messagesRecivedFromClient)
+            {
+                this.MessageConsoleClientListBox.Items.Add(valuePair);
+            }
+            
+            foreach (KeyValuePair<DateTime, string> valuePair in debugLogFromClient)
+            {
+                this.DebugConsoleClientListBox.Items.Add(valuePair);
+            }
+
+            foreach (KeyValuePair<DateTime, string> valuePair in debugLogFromServer)
+            {
+                this.DebugConsoleServerListBox.Items.Add(valuePair);
+            }
+
+            foreach (KeyValuePair<DateTime, string> valuePair in messagesRecivedFromServer)
+            {
+                this.MessageConsoleServerListBox.Items.Add(valuePair);
+            }
+        }
+
+        private void ButtonRefreashMessageBoxes_Click(object sender, RoutedEventArgs e)
+        {
+            this.RefreshConsoleMessages();
+        }
     }
 }

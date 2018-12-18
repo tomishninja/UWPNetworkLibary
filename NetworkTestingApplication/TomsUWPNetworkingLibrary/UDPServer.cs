@@ -53,28 +53,26 @@ namespace TomsUWPNetworkingLibrary
             await Responce(request, sender, e);
 
             this.AddEntryToDebugLog("server sent back the response");
-
-            sender.Dispose();
-
-            this.AddEntryToDebugLog("server closed its socket");
         }
 
         internal virtual async Task Responce(string request, DatagramSocket sender, DatagramSocketMessageReceivedEventArgs e)
         {
             // Echo the request back as the response.
-            using (Stream outputStream = (await socket.GetOutputStreamAsync(e.RemoteAddress, portNumber)).AsStreamForWrite())
-            {
-                using (var streamWriter = new StreamWriter(outputStream))
-                {
-                    await streamWriter.WriteLineAsync(request);
-                    await streamWriter.FlushAsync();
-                }
-            }
+            //using (Stream outputStream = (await socket.GetOutputStreamAsync(e.RemoteAddress, portNumber)).AsStreamForWrite())
+            //{
+                //using (var streamWriter = new StreamWriter(outputStream))
+                //{
+                    //await streamWriter.WriteLineAsync(request);
+                    //await streamWriter.FlushAsync();
+                //}
+            //}
         }
 
         public override void Close()
         {
-            throw new NotImplementedException();
+            socket.Dispose();
+
+            this.AddEntryToDebugLog("server closed its socket");
         }
     }
 }

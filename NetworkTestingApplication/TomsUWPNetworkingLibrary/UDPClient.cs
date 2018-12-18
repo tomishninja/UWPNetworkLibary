@@ -8,11 +8,8 @@ using System.Threading.Tasks;
 
 namespace TomsUWPNetworkingLibrary
 {
-
-    
     public class UDPClient : NetworkClient
     {
-    
         private Windows.Networking.Sockets.DatagramSocket socket = null;
 
         private Windows.Networking.HostName _hostName = null;
@@ -34,7 +31,7 @@ namespace TomsUWPNetworkingLibrary
             socket.Dispose();
         }
 
-        public void Close()
+        public override void Close()
         {
             socket.Dispose();
 
@@ -49,7 +46,7 @@ namespace TomsUWPNetworkingLibrary
 
                 await socket.BindServiceNameAsync(portNumber);
 
-                this.AddEntryToDebugLog(string.Format("client is bound to port number"));
+                this.AddEntryToDebugLog("client is bound to port number");
             }
             catch (Exception ex)
             {
@@ -63,20 +60,17 @@ namespace TomsUWPNetworkingLibrary
             try
             {
                 // Send a request to the echo server.
-                using (var serverDatagramSocket = new Windows.Networking.Sockets.DatagramSocket())
+                using (Stream outputStream = (await socket.GetOutputStreamAsync(_hostName, this.portNumber)).AsStreamForWrite())
                 {
-                    using (Stream outputStream = (await serverDatagramSocket.GetOutputStreamAsync(_hostName, this.portNumber)).AsStreamForWrite())
+                    using (var streamWriter = new StreamWriter(outputStream))
                     {
-                        using (var streamWriter = new StreamWriter(outputStream))
-                        {
-                            await streamWriter.WriteLineAsync(message);
-                            await streamWriter.FlushAsync();
-                        }
+                        await streamWriter.WriteLineAsync(message);
+                        await streamWriter.FlushAsync();
                     }
                 }
 
                 this.AddEntryToDebugLog("client sent the request");
-                this.AddEntryToMessageLog(message);
+                //this.AddEntryToMessageLog(message);
             }
             catch (Exception ex)
             {

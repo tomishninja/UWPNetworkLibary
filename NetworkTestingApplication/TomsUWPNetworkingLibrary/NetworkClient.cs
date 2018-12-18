@@ -21,5 +21,7 @@ namespace TomsUWPNetworkingLibrary
         public abstract Task SendAsync(string message);
 
         public abstract Task Connect();
+
+        public abstract void Close();
     }
 }

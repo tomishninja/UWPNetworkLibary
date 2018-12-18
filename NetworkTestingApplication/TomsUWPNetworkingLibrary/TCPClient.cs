@@ -25,6 +25,13 @@ namespace TomsUWPNetworkingLibrary
             socket.Dispose();
         }
 
+        public override void Close()
+        {
+            socket.Dispose();
+
+            this.AddEntryToDebugLog("client closed its socket");
+        }
+
         public override async Task Connect()
         {
             try
