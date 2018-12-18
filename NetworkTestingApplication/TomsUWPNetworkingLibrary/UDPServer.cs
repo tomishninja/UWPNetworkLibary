@@ -71,5 +71,10 @@ namespace TomsUWPNetworkingLibrary
                 }
             }
         }
+
+        public override void Close()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

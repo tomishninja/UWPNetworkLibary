@@ -406,8 +406,27 @@ namespace NetworkTestingApplication
             }
 
             // populate each list with the new feilds
-            KeyValuePair<DateTime, string>[] serverLog = networkingServer.DegbugLogMessages;
-            KeyValuePair<DateTime, string>[] clientLog = networkingClient.DegbugLogMessages;
+            KeyValuePair<DateTime, string>[] clientLog;
+            if (this.networkingClient != null)
+            {
+                clientLog = networkingClient.DegbugLogMessages;
+            }
+            else
+            {
+                // create a empty array if the item dosn't exist
+                clientLog = new KeyValuePair<DateTime, string>[0];
+            }
+
+            KeyValuePair<DateTime, string>[] serverLog;
+            if (this.networkingServer != null)
+            {
+                serverLog = networkingServer.DegbugLogMessages;
+            }
+            else
+            {
+                // create a empty array if the item dosn't exist
+                serverLog = new KeyValuePair<DateTime, string>[0];
+            }
 
             for (int index = 0; index < serverLog.Length; index++)
             {
