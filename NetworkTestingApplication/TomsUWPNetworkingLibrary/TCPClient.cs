@@ -58,7 +58,7 @@ namespace TomsUWPNetworkingLibrary
                 }
             }
 
-            this.AddEntryToDebugLog(string.Format("client sent the request");
+            this.AddEntryToDebugLog("client sent the request");
 
             // Read data from the echo server.
             string response;
