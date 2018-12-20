@@ -510,8 +510,8 @@ namespace NetworkTestingApplication
             }
             else
             {
-                debugLogFromServer = networkingServer.DegbugLogMessages;
-                messagesRecivedFromServer = networkingServer.MessageRecivedLog;
+                debugLogFromServer = new KeyValuePair<DateTime, string>[0];
+                messagesRecivedFromServer = new KeyValuePair<DateTime, string>[0];
             }
 
             foreach(KeyValuePair<DateTime, string> valuePair in messagesRecivedFromClient)
